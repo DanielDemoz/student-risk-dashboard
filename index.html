@@ -235,15 +235,28 @@
 
         <main>
             <section class="upload-section">
-                <h2>Upload Excel File</h2>
-                <p style="color: #718096; margin-bottom: 20px;">
-                    Upload an Excel file with <strong>Grades</strong> and <strong>Attendance</strong> worksheets.
-                    The system will automatically merge data and generate risk predictions.
-                </p>
+                <h2>📤 Upload Excel File</h2>
+                
+                <!-- Instructions Box -->
+                <div style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin-bottom: 20px; border-radius: 6px;">
+                    <h3 style="margin: 0 0 10px 0; color: #1976D2; font-size: 1.1em;">📋 How to Upload:</h3>
+                    <ol style="margin: 0; padding-left: 20px; color: #333;">
+                        <li style="margin-bottom: 8px;">Make sure your Excel file has <strong>two worksheets</strong>:
+                            <ul style="margin-top: 5px; padding-left: 20px;">
+                                <li><strong>Grades</strong> - with Student#, Student Name, Program Name, Current Overall Program Grade</li>
+                                <li><strong>Attendance</strong> - with Student#, Student Name, Scheduled Hours, Attended Hours</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 8px;">Click the <strong>"Choose File"</strong> button below</li>
+                        <li style="margin-bottom: 8px;">Select your Excel file (.xlsx or .xls)</li>
+                        <li style="margin-bottom: 8px;">Click <strong>"Upload & Process Excel File"</strong></li>
+                        <li>Wait for processing - results will appear below!</li>
+                    </ol>
+                </div>
                 
                 <!-- API Configuration -->
                 <div class="api-config">
-                    <label for="apiUrl">API Server URL:</label>
+                    <label for="apiUrl">🔗 API Server URL:</label>
                     <input type="text" id="apiUrl" value="http://localhost:8001" placeholder="http://localhost:8001 or https://your-deployed-api.com">
                     <small style="display: block; margin-top: 5px; color: #666;">
                         Enter your API server URL. For local development, use http://localhost:8001
@@ -251,16 +264,23 @@
                 </div>
                 
                 <form id="uploadForm">
-                    <div class="file-input-wrapper">
-                        <label for="excelFile">📊 Excel File (Computek Demo Data.xlsx)</label>
-                        <input type="file" id="excelFile" accept=".xlsx,.xls" required>
-                        <small>
-                            Required worksheets: <strong>Grades</strong> (Student#, Student Name, Program Name, Current Overall Program Grade) 
-                            and <strong>Attendance</strong> (Student#, Student Name, Scheduled Hours, Attended Hours, etc.)
+                    <div class="file-input-wrapper" style="border: 2px dashed #4299e1; padding: 30px; text-align: center; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
+                        <label for="excelFile" style="font-size: 1.2em; display: block; margin-bottom: 15px; cursor: pointer;">
+                            📊 Click to Select Excel File
+                        </label>
+                        <input type="file" id="excelFile" accept=".xlsx,.xls" required 
+                               style="display: none;" onchange="document.getElementById('fileName').textContent = this.files[0] ? 'Selected: ' + this.files[0].name : 'No file selected'">
+                        <div id="fileName" style="color: #4299e1; font-weight: 600; margin-top: 10px; font-size: 1em;">
+                            No file selected
+                        </div>
+                        <small style="display: block; margin-top: 15px; color: #718096;">
+                            Required worksheets: <strong>Grades</strong> and <strong>Attendance</strong>
                         </small>
                     </div>
 
-                    <button type="submit" class="upload-btn" id="uploadBtn">Upload & Process Excel File</button>
+                    <button type="submit" class="upload-btn" id="uploadBtn" style="font-size: 1.2em; padding: 18px;">
+                        🚀 Upload & Process Excel File
+                    </button>
                 </form>
 
                 <div class="loader" id="loader" style="display:none;">
@@ -342,13 +362,32 @@
         const resultsSection = document.getElementById('resultsSection');
         const tableBody = document.getElementById('tableBody');
 
+        // File input click handler
+        document.querySelector('.file-input-wrapper label').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('excelFile').click();
+        });
+        
+        // Update file name display
+        document.getElementById('excelFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileNameDiv = document.getElementById('fileName');
+            if (file) {
+                fileNameDiv.textContent = '✓ Selected: ' + file.name;
+                fileNameDiv.style.color = '#48bb78';
+            } else {
+                fileNameDiv.textContent = 'No file selected';
+                fileNameDiv.style.color = '#4299e1';
+            }
+        });
+        
         // Form submit
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const file = document.getElementById('excelFile').files[0];
             if (!file) {
-                showMessage('error', 'Please select a file');
+                showMessage('error', '❌ Please select an Excel file first!');
                 return;
             }
             

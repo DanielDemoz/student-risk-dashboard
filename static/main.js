@@ -7,13 +7,20 @@ const messageDiv = document.getElementById('message');
 const resultsSection = document.getElementById('resultsSection');
 const tableBody = document.getElementById('tableBody');
 
+// Make file input clickable
+document.querySelector('.file-input-wrapper').addEventListener('click', function(e) {
+    if (e.target.tagName !== 'INPUT') {
+        document.getElementById('excelFile').click();
+    }
+});
+
 // Form submit
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const file = document.getElementById('excelFile').files[0];
     if (!file) {
-        showMessage('error', 'Please select a file');
+        showMessage('error', '❌ Please select an Excel file first!');
         return;
     }
     
