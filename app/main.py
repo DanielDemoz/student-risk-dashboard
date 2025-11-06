@@ -36,9 +36,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure directories exist
-Path("data").mkdir(exist_ok=True)
-Path("static").mkdir(exist_ok=True)
+# Ensure directories exist (will be created on startup)
+# Note: Directory creation moved to startup event to avoid permission issues
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -50,8 +49,34 @@ async def root():
     return HTMLResponse("<h1>Dashboard not found. Please check static/index.html</h1>")
 
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Startup event to create directories
+@app.on_event("startup")
+async def startup_event():
+    """Create necessary directories on startup."""
+    try:
+        data_dir = Path("data")
+        static_dir = Path("static")
+        db_dir = Path("db")
+        
+        if not data_dir.exists():
+            data_dir.mkdir(parents=True, exist_ok=True)
+        if not static_dir.exists():
+            static_dir.mkdir(parents=True, exist_ok=True)
+        if not db_dir.exists():
+            db_dir.mkdir(parents=True, exist_ok=True)
+            
+        logger.info("Directories verified")
+    except Exception as e:
+        logger.warning(f"Could not create directories: {e}")
+        # Continue anyway - directories might already exist
+
+
+# Mount static files (only if directory exists)
+static_dir = Path("static")
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+else:
+    logger.warning("Static directory not found - static files may not be accessible")
 
 
 @app.post("/upload-excel", response_model=ExcelUploadResponse)
