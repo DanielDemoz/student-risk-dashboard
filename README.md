@@ -19,7 +19,7 @@ A FastAPI-based web application for analyzing student performance and attendance
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/student-risk-dashboard.git
+   git clone https://github.com/DanielDemoz/student-risk-dashboard.git
    cd student-risk-dashboard
    ```
 
