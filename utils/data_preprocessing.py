@@ -32,6 +32,17 @@ def convert_grade_to_numeric(grade_value) -> float:
 
 def determine_risk_label(grade: float, attendance: float) -> str:
     """Determine risk label."""
+    # Ensure numeric types
+    try:
+        grade = float(grade) if not pd.isna(grade) else np.nan
+    except (ValueError, TypeError):
+        grade = np.nan
+    
+    try:
+        attendance = float(attendance) if not pd.isna(attendance) else np.nan
+    except (ValueError, TypeError):
+        attendance = np.nan
+    
     if pd.isna(grade) and pd.isna(attendance):
         return "Unknown"
     
@@ -47,6 +58,17 @@ def determine_risk_label(grade: float, attendance: float) -> str:
 
 def get_recommended_action(grade: float, attendance: float) -> str:
     """Get recommended action."""
+    # Ensure numeric types
+    try:
+        grade = float(grade) if not pd.isna(grade) else np.nan
+    except (ValueError, TypeError):
+        grade = np.nan
+    
+    try:
+        attendance = float(attendance) if not pd.isna(attendance) else np.nan
+    except (ValueError, TypeError):
+        attendance = np.nan
+    
     grade_low = not pd.isna(grade) and grade < 70
     attendance_low = not pd.isna(attendance) and attendance < 70
     
@@ -141,20 +163,30 @@ def process_excel_file(file_path: Path) -> Tuple[pd.DataFrame, Dict]:
     else:
         merged['Program'] = 'Unknown'
     
-    # Convert grade
+    # Convert grade - ensure numeric
     merged['grade'] = merged[grade_col].apply(convert_grade_to_numeric)
+    merged['grade'] = pd.to_numeric(merged['grade'], errors='coerce')
     
     # Calculate attendance rate
     def calc_attendance(row):
-        if 'Attended % to Date' in row and pd.notna(row.get('Attended % to Date')):
-            return float(row['Attended % to Date'])
+        if 'Attended % to Date' in merged.columns and pd.notna(row.get('Attended % to Date')):
+            try:
+                return float(row['Attended % to Date'])
+            except (ValueError, TypeError):
+                pass
         attended = row.get('Attended Hours to Date', 0)
         scheduled = row.get('Scheduled Hours to Date', 0)
-        if pd.notna(scheduled) and scheduled > 0:
-            return (float(attended) / float(scheduled)) * 100
+        try:
+            attended = float(attended) if pd.notna(attended) else 0
+            scheduled = float(scheduled) if pd.notna(scheduled) else 0
+            if scheduled > 0:
+                return (attended / scheduled) * 100
+        except (ValueError, TypeError):
+            pass
         return np.nan
     
     merged['attendance_rate'] = merged.apply(calc_attendance, axis=1)
+    merged['attendance_rate'] = pd.to_numeric(merged['attendance_rate'], errors='coerce')
     
     # Fill missing grades with program average
     for program in merged['Program'].unique():
@@ -195,13 +227,17 @@ def process_excel_file(file_path: Path) -> Tuple[pd.DataFrame, Dict]:
     result.columns = ['student_id', 'student_name', 'program', 'grade', 
                      'attendance_rate', 'risk_label', 'recommended_action', 'email']
     
+    # Ensure final columns are numeric
+    result['grade'] = pd.to_numeric(result['grade'], errors='coerce')
+    result['attendance_rate'] = pd.to_numeric(result['attendance_rate'], errors='coerce')
+    
     # Statistics
     stats = {
         'total_students': len(result),
         'at_risk_count': len(result[result['risk_label'].isin(['At Risk', 'High Risk'])]),
         'safe_count': len(result[result['risk_label'] == 'Safe']),
-        'avg_grade': result['grade'].mean(),
-        'avg_attendance': result['attendance_rate'].mean()
+        'avg_grade': float(result['grade'].mean()) if not result['grade'].isna().all() else 0.0,
+        'avg_attendance': float(result['attendance_rate'].mean()) if not result['attendance_rate'].isna().all() else 0.0
     }
     
     return result, stats
