@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Risk Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Student Risk Dashboard</h1>
+            <p class="subtitle">Computek College - Risk Assessment System</p>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <h2>Upload Excel File</h2>
+                <p>Upload an Excel file with <strong>Grades</strong> and <strong>Attendance</strong> worksheets.</p>
+                
+                <form id="uploadForm">
+                    <div class="file-input-wrapper">
+                        <label for="excelFile">📊 Excel File</label>
+                        <input type="file" id="excelFile" accept=".xlsx,.xls" required>
+                        <small>Required: Grades and Attendance worksheets</small>
+                    </div>
+
+                    <button type="submit" class="upload-btn" id="uploadBtn">Upload & Process</button>
+                </form>
+
+                <div class="loader" id="loader" style="display:none;">
+                    <div class="spinner"></div>
+                    <p>Processing...</p>
+                </div>
+
+                <div class="message" id="message"></div>
+            </section>
+
+            <section class="results-section" id="resultsSection" style="display:none;">
+                <h2>Top At-Risk Students</h2>
+                
+                <div class="summary-card" id="summaryCard">
+                    <div class="summary-item">
+                        <span class="label">Total:</span>
+                        <span class="value" id="totalStudents">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">High Risk:</span>
+                        <span class="value high-risk" id="highRiskCount">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">At Risk:</span>
+                        <span class="value medium-risk" id="mediumRiskCount">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Safe:</span>
+                        <span class="value low-risk" id="lowRiskCount">0</span>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Program</th>
+                                <th>Grade</th>
+                                <th>Attendance %</th>
+                                <th>Risk Label</th>
+                                <th>Recommended Action</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>
+

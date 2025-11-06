@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - Risk Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .nav {
+            background: #2d2d2d;
+            padding: 15px 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+
+        .nav a:hover {
+            color: #764ba2;
+        }
+
+        .endpoint {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .method {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .method.get {
+            background: #61affe;
+            color: white;
+        }
+
+        .method.post {
+            background: #49cc90;
+            color: white;
+        }
+
+        .method.put {
+            background: #fca130;
+            color: white;
+        }
+
+        .method.delete {
+            background: #f93e3e;
+            color: white;
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .endpoint-description {
+            margin-left: auto;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .endpoint-content {
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .param-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .param-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .param-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .param-name {
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .param-type {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .param-required {
+            color: #f93e3e;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .param-optional {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .try-it {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .try-it h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .try-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .try-btn:hover {
+            opacity: 0.9;
+        }
+
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #49cc90;
+        }
+
+        .response pre {
+            background: #2d2d2d;
+            color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .response-status {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #49cc90;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 API Documentation</h1>
+        <p>AI Attendance & Performance Risk Dashboard API - Interactive API Explorer</p>
+    </div>
+
+    <div class="container">
+        <div class="nav">
+            <a href="/">← Back to Dashboard</a>
+            <a href="/redoc" target="_blank">ReDoc (Alternative Docs)</a>
+        </div>
+
+        <div class="info-box">
+            <h3>ℹ️ API Base URL</h3>
+            <p><code id="apiBase">http://localhost:8001</code></p>
+            <p style="margin-top: 10px;">All endpoints support JSON responses. Use the "Try It" buttons to test endpoints directly from this page.</p>
+        </div>
+
+        <!-- Upload Endpoint -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/upload</span>
+                <span class="endpoint-description">Upload CSV/Excel files</span>
+            </div>
+            <div class="endpoint-content">
+                <div class="section">
+                    <h3>Description</h3>
+                    <p>Upload one or more CSV/Excel files (grades.csv, attendance.csv, absences.csv). Files are processed, merged, and risk scores are calculated automatically.</p>
+                </div>
+                <div class="section">
+                    <h3>Parameters</h3>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">grades</span></td>
+                                <td><span class="param-type">File</span></td>
+                                <td><span class="param-optional">Optional</span></td>
+                                <td>Grades CSV/Excel file (Student ID, Student Name, Grade, Program)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">attendance</span></td>
+                                <td><span class="param-type">File</span></td>
+                                <td><span class="param-optional">Optional</span></td>
+                                <td>Attendance CSV/Excel file (Student ID, Classes Attended, Total Classes, Program)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">absences</span></td>
+                                <td><span class="param-type">File</span></td>
+                                <td><span class="param-optional">Optional</span></td>
+                                <td>Absences CSV/Excel file (Student ID, Absence Dates, Program)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="try-it">
+                    <h4>Try it out</h4>
+                    <input type="file" id="uploadGrades" accept=".csv,.xlsx,.xls" style="margin-bottom: 10px;"><br>
+                    <input type="file" id="uploadAttendance" accept=".csv,.xlsx,.xls" style="margin-bottom: 10px;"><br>
+                    <input type="file" id="uploadAbsences" accept=".csv,.xlsx,.xls" style="margin-bottom: 10px;"><br>
+                    <button class="try-btn" onclick="tryUpload()">Execute</button>
+                    <div class="response" id="uploadResponse" style="display: none;">
+                        <div class="response-status">200 OK</div>
+                        <pre id="uploadResponseText"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Get All Students -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/students</span>
+                <span class="endpoint-description">Get all student risk data</span>
+            </div>
+            <div class="endpoint-content">
+                <div class="section">
+                    <h3>Description</h3>
+                    <p>Retrieve all student risk data. Supports optional filtering by program and risk level.</p>
+                </div>
+                <div class="section">
+                    <h3>Query Parameters</h3>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">program</span></td>
+                                <td><span class="param-type">string</span></td>
+                                <td><span class="param-optional">Optional</span></td>
+                                <td>Filter by program name</td>
+                            </tr>
+                            <tr>
+                                <td><span class="param-name">risk_level</span></td>
+                                <td><span class="param-type">string</span></td>
+                                <td><span class="param-optional">Optional</span></td>
+                                <td>Filter by risk level (High, Medium, Low)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="try-it">
+                    <h4>Try it out</h4>
+                    <input type="text" id="filterProgram" placeholder="Program (optional)" style="padding: 8px; margin-right: 10px; margin-bottom: 10px; width: 250px;"><br>
+                    <input type="text" id="filterRiskLevel" placeholder="Risk Level (High/Medium/Low)" style="padding: 8px; margin-right: 10px; margin-bottom: 10px; width: 250px;"><br>
+                    <button class="try-btn" onclick="tryGetStudents()">Execute</button>
+                    <div class="response" id="studentsResponse" style="display: none;">
+                        <div class="response-status">200 OK</div>
+                        <pre id="studentsResponseText"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Get Student by ID -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/students/{student_id}</span>
+                <span class="endpoint-description">Get individual student risk profile</span>
+            </div>
+            <div class="endpoint-content">
+                <div class="section">
+                    <h3>Description</h3>
+                    <p>Get risk profile for a specific student by their Student ID.</p>
+                </div>
+                <div class="section">
+                    <h3>Path Parameters</h3>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">student_id</span></td>
+                                <td><span class="param-type">string</span></td>
+                                <td><span class="param-required">Required</span></td>
+                                <td>Student ID</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="try-it">
+                    <h4>Try it out</h4>
+                    <input type="text" id="studentId" placeholder="Enter Student ID" style="padding: 8px; margin-right: 10px; margin-bottom: 10px; width: 250px;">
+                    <button class="try-btn" onclick="tryGetStudent()">Execute</button>
+                    <div class="response" id="studentResponse" style="display: none;">
+                        <div class="response-status">200 OK</div>
+                        <pre id="studentResponseText"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Get Summary -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/summary</span>
+                <span class="endpoint-description">Get aggregated risk statistics</span>
+            </div>
+            <div class="endpoint-content">
+                <div class="section">
+                    <h3>Description</h3>
+                    <p>Get summary statistics including total students, risk counts, and averages.</p>
+                </div>
+                <div class="section">
+                    <h3>Query Parameters</h3>
+                    <table class="param-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="param-name">program</span></td>
+                                <td><span class="param-type">string</span></td>
+                                <td><span class="param-optional">Optional</span></td>
+                                <td>Filter by program name</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="try-it">
+                    <h4>Try it out</h4>
+                    <button class="try-btn" onclick="tryGetSummary()">Execute</button>
+                    <div class="response" id="summaryResponse" style="display: none;">
+                        <div class="response-status">200 OK</div>
+                        <pre id="summaryResponseText"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Data Alias -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/risk-data</span>
+                <span class="endpoint-description">Power BI compatible - Get all risk data</span>
+            </div>
+            <div class="endpoint-content">
+                <div class="section">
+                    <h3>Description</h3>
+                    <p>Alias for <code>/students</code> endpoint, designed for Power BI integration. Returns all student risk data in JSON format.</p>
+                </div>
+                <div class="try-it">
+                    <h4>Try it out</h4>
+                    <button class="try-btn" onclick="tryGetRiskData()">Execute</button>
+                    <div class="response" id="riskDataResponse" style="display: none;">
+                        <div class="response-status">200 OK</div>
+                        <pre id="riskDataResponseText"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Summary Alias -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/risk-summary</span>
+                <span class="endpoint-description">Power BI compatible - Get risk summary</span>
+            </div>
+            <div class="endpoint-content">
+                <div class="section">
+                    <h3>Description</h3>
+                    <p>Alias for <code>/summary</code> endpoint, designed for Power BI integration. Returns aggregated risk statistics.</p>
+                </div>
+                <div class="try-it">
+                    <h4>Try it out</h4>
+                    <button class="try-btn" onclick="tryGetRiskSummary()">Execute</button>
+                    <div class="response" id="riskSummaryResponse" style="display: none;">
+                        <div class="response-status">200 OK</div>
+                        <pre id="riskSummaryResponseText"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function tryUpload() {
+            const formData = new FormData();
+            const grades = document.getElementById('uploadGrades').files[0];
+            const attendance = document.getElementById('uploadAttendance').files[0];
+            const absences = document.getElementById('uploadAbsences').files[0];
+
+            if (!grades && !attendance && !absences) {
+                alert('Please select at least one file');
+                return;
+            }
+
+            if (grades) formData.append('grades', grades);
+            if (attendance) formData.append('attendance', attendance);
+            if (absences) formData.append('absences', absences);
+
+            try {
+                const response = await fetch(`${API_BASE}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                document.getElementById('uploadResponse').style.display = 'block';
+                document.getElementById('uploadResponseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('uploadResponse').style.display = 'block';
+                document.getElementById('uploadResponseText').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function tryGetStudents() {
+            const program = document.getElementById('filterProgram').value;
+            const riskLevel = document.getElementById('filterRiskLevel').value;
+            let url = `${API_BASE}/students`;
+            const params = new URLSearchParams();
+            if (program) params.append('program', program);
+            if (riskLevel) params.append('risk_level', riskLevel);
+            if (params.toString()) url += '?' + params.toString();
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                document.getElementById('studentsResponse').style.display = 'block';
+                document.getElementById('studentsResponseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('studentsResponse').style.display = 'block';
+                document.getElementById('studentsResponseText').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function tryGetStudent() {
+            const studentId = document.getElementById('studentId').value;
+            if (!studentId) {
+                alert('Please enter a Student ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/students/${studentId}`);
+                const data = await response.json();
+                document.getElementById('studentResponse').style.display = 'block';
+                document.getElementById('studentResponseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('studentResponse').style.display = 'block';
+                document.getElementById('studentResponseText').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function tryGetSummary() {
+            try {
+                const response = await fetch(`${API_BASE}/summary`);
+                const data = await response.json();
+                document.getElementById('summaryResponse').style.display = 'block';
+                document.getElementById('summaryResponseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('summaryResponse').style.display = 'block';
+                document.getElementById('summaryResponseText').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function tryGetRiskData() {
+            try {
+                const response = await fetch(`${API_BASE}/risk-data`);
+                const data = await response.json();
+                document.getElementById('riskDataResponse').style.display = 'block';
+                document.getElementById('riskDataResponseText').textContent = JSON.stringify(data.slice(0, 5), null, 2) + '\n\n... (showing first 5 of ' + data.length + ' students)';
+            } catch (error) {
+                document.getElementById('riskDataResponse').style.display = 'block';
+                document.getElementById('riskDataResponseText').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function tryGetRiskSummary() {
+            try {
+                const response = await fetch(`${API_BASE}/risk-summary`);
+                const data = await response.json();
+                document.getElementById('riskSummaryResponse').style.display = 'block';
+                document.getElementById('riskSummaryResponseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('riskSummaryResponse').style.display = 'block';
+                document.getElementById('riskSummaryResponseText').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Update API base URL display
+        document.getElementById('apiBase').textContent = API_BASE;
+    </script>
+</body>
+</html>
+

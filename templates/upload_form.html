@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Student Data - Risk Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .upload-section {
+            margin-bottom: 30px;
+        }
+        
+        .file-input-wrapper {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .file-input-container {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+        
+        .file-input-container:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        input[type="file"] {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .info-box h3 {
+            margin-bottom: 10px;
+            color: #1976D2;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Student Risk Dashboard</h1>
+        <p class="subtitle">Upload CSV/Excel files to update risk assessments</p>
+        
+        <div class="info-box">
+            <h3>📋 Required File Formats</h3>
+            <ul>
+                <li><strong>Grades:</strong> Student ID, Student Name, Grade, Program</li>
+                <li><strong>Attendance:</strong> Student ID, Student Name, Classes Attended, Total Classes, Program</li>
+                <li><strong>Absences:</strong> Student ID, Student Name, Absence Dates, Program</li>
+            </ul>
+        </div>
+        
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="upload-section">
+                <div class="file-input-wrapper">
+                    <label for="grades">📈 Grades File (CSV/Excel)</label>
+                    <div class="file-input-container">
+                        <input type="file" id="grades" name="grades" accept=".csv,.xlsx,.xls">
+                        <small>Optional: Upload grades.csv or grades.xlsx</small>
+                    </div>
+                </div>
+                
+                <div class="file-input-wrapper">
+                    <label for="attendance">📅 Attendance File (CSV/Excel)</label>
+                    <div class="file-input-container">
+                        <input type="file" id="attendance" name="attendance" accept=".csv,.xlsx,.xls">
+                        <small>Optional: Upload attendance.csv or attendance.xlsx</small>
+                    </div>
+                </div>
+                
+                <div class="file-input-wrapper">
+                    <label for="absences">❌ Absences File (CSV/Excel)</label>
+                    <div class="file-input-container">
+                        <input type="file" id="absences" name="absences" accept=".csv,.xlsx,.xls">
+                        <small>Optional: Upload absences.csv or absences.xlsx</small>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Upload & Process Files
+            </button>
+        </form>
+        
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Processing files...</p>
+        </div>
+        
+        <div class="message" id="message"></div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('uploadForm');
+        const messageDiv = document.getElementById('message');
+        const loader = document.getElementById('loader');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            
+            // Show loader, hide message, disable button
+            loader.style.display = 'block';
+            messageDiv.style.display = 'none';
+            submitBtn.disabled = true;
+            
+            try {
+                // Determine API endpoint (default to localhost for development)
+                const apiUrl = window.location.origin.replace(':5500', ':8000') + '/upload';
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('success', `
+                        ✅ ${data.message}<br>
+                        Files Processed: ${data.files_processed}<br>
+                        Students Updated: ${data.students_processed}<br>
+                        Timestamp: ${new Date(data.timestamp).toLocaleString()}
+                    `);
+                    form.reset();
+                } else {
+                    showMessage('error', `❌ Error: ${data.detail || 'Unknown error occurred'}`);
+                }
+            } catch (error) {
+                showMessage('error', `❌ Network Error: ${error.message}. Make sure the API is running on port 8000.`);
+            } finally {
+                loader.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function showMessage(type, text) {
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = text;
+            messageDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+
